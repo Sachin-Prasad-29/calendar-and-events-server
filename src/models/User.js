@@ -15,11 +15,26 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    phone: String,
-    profilePic: String,
-    birthday: Date,
-    location: String,
-    website: String,
+    phone: {
+        type: String,
+        default: null,
+    },
+    profilePic: {
+        type: String,
+        default: null,
+    },
+    birthday: {
+        type: Date,
+        default: null,
+    },
+    location: {
+        type: String,
+        default: null,
+    },
+    website: {
+        type: String,
+        default: null,
+    },
 });
 
 const emailPat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -39,7 +54,7 @@ userSchema
 
 const SALT_FACTOR = 10;
 
-console.log(this); // global / window
+//console.log(this); // global / window
 
 userSchema.pre('save', function (done) {
     // DO NOT use arrow function here

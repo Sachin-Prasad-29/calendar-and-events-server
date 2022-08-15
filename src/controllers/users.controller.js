@@ -1,5 +1,12 @@
 const { createHttpError } = require('../errors/custom-error');
-const { addUser, getUserByEmail, checkPassword, updateProfilePic } = require('../services/user.service');
+const {
+    addUser,
+    getUserByEmail,
+    checkPassword,
+    getProfileSvc,
+    editProfileSvc,
+    getAllUsersSvc,
+} = require('../services/user.service');
 const jwt = require('jsonwebtoken');
 
 const register = async (req, res, next) => {
@@ -14,7 +21,7 @@ const register = async (req, res, next) => {
         ...insertedUser.toObject(),
     };
     delete userToSend.password;
-    res.status(201).json({ status: 'success', data: userToSend });
+    res.status(201).json({ status: 'success', data: insertedUser });
 };
 
 const login = async (req, res, next) => {
@@ -30,6 +37,7 @@ const login = async (req, res, next) => {
 
     await checkPassword(user, password);
     const claims = {
+        id: user._id,
         name: user.name,
         email: user.email,
     };
@@ -53,12 +61,25 @@ const login = async (req, res, next) => {
 };
 
 const getProfile = async (req, res) => {
-    res.status(201).json({ status: 'Success Veiw Profile' });
+    const userId = res.locals.claims.id;
+    const userDetails = await getProfileSvc(userId);
+    let userToSend = { ...userDetails.toObject() };
+    delete userToSend.password;
+    res.status(201).json({ status: 'success', data: userToSend });
 };
+
 const editProfile = async (req, res) => {
     const data = req.body;
-    console.log(data);
-    res.status(201).json({ status: 'Success edited the profile', data: data });
+    const userId = res.locals.claims.id;
+    const userDetails = await editProfileSvc(userId, data);
+
+    let userToSend = { ...userDetails.toObject() };
+    delete userToSend.password;
+    res.status(201).json({ status: 'success', data: userToSend });
+};
+const getAllUsers = async (req, res) => {
+    const alluserDetails = await getAllUsersSvc();
+    res.status(201).json({ status: 'success', count: alluserDetails.length, data: alluserDetails });
 };
 
 module.exports = {
@@ -66,4 +87,5 @@ module.exports = {
     login,
     getProfile,
     editProfile,
+    getAllUsers,
 };

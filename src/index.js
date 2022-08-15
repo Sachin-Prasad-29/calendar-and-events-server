@@ -1,5 +1,5 @@
 require('dotenv').config();
-require('express-async-errors');  // this will allow to 
+require('express-async-errors');  // this will allow to throw error without writing try catch in our function 
 const express = require('express');
 const userApiRouter = require('./routes/users.routes');
 const eventsApiRouter = require('./routes/events.routes');
