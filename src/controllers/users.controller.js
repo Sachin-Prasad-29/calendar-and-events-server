@@ -1,6 +1,6 @@
 const { createHttpError } = require('../errors/custom-error');
-const jwt = require('jsonwebtoken');
 const { addUser, getUserByEmail, checkPassword, updateProfilePic } = require('../services/user.service');
+const jwt = require('jsonwebtoken');
 
 const register = async (req, res, next) => {
     const user = req.body;
