@@ -10,7 +10,7 @@ const {
 } = require('../controllers/events.controller');
 const router = express.Router();
 
-router.get('/', getEvents);
+router.get('/', authenticate, getEvents);
 router.post('/', authenticate, addEvent);
 router.get('/:id', authenticate, getAEvent);
 router.patch('/:id', authenticate, editEvent);

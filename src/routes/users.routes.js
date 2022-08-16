@@ -5,8 +5,8 @@ const router = express.Router();
 
 router.post('/register', register);
 router.post('/login', login);
-router.get('/profile', getProfile);
+router.get('/profile', authenticate, getProfile);
 router.patch('/profile', authenticate, editProfile);
-router.get('/users', getAllUsers);
+router.get('/users', authenticate, getAllUsers);
 
 module.exports = router;
