@@ -1,98 +1,110 @@
 const { createHttpError } = require('../errors/custom-error');
-const { addEventSvc, getEventsSvc } = require('../services/event.service');
+const {
+    addEventSvc,
+    getEventsSvc,
+    getEventByIdSvc,
+    editEventSvc,
+    deleteEventSvc,
+    excuseEventSvc,
+} = require('../services/event.service');
 const jwt = require('jsonwebtoken');
-const { query } = require('../models/Time');
 
-const getEvents = async (req, res, next) => {
-    const {
-        page,
-        title,
-        category,
-        startDate,
-        endDate,
-        startTime,
-        endTime,
-        createdOn,
-        location,
-        keyword,
-        createdBy,
-        completed,
-    } = req.query;
+const getEvents = async (req, res) => {
+    const { page, title, category, startDate, endDate, createdOn, keyword, createdBy, completed } = req.query;
     //console.log(req.query);
     const queryObject = {};
+
+    //filter based on title
     if (title) {
-        queryObject.title = title;
+        queryObject.title = { $regex: title, $options: 'i' };
     }
+    //filter based on category
     if (category) {
         queryObject.category = category;
     }
-    if (startDate) {
-        queryObject.startDate = startDate;
-    }
-    if (endDate) {
-        queryObject.endDate = endDate;
-    }
-    if (startTime) {
-        queryObject.startTime = startTime;
-    }
-    if (endTime) {
-        queryObject.endTime = endTime;
-    }
+    //filter based on created Date
     if (createdOn) {
-        queryObject.createdOn = createdOn;
+        queryObject.createdOn = {
+            $gte: `${createdOn}T00:00:00.000Z`,
+            $lt: `${createdOn}T23:59:59.999Z`,
+        };
     }
-    if (location) {
-        queryObject.location = location;
+    //filter based on startDate
+    if (startDate) {
+        queryObject.startDate = {
+            $gte: `${startDate}T00:00:00.000Z`,
+            $lt: `${startDate}T23:59:59.999Z`,
+        };
     }
+
+    //filter based on endDate
+    if (endDate) {
+        queryObject.endDate = {
+            $gte: `${endDate}T00:00:00.000Z`,
+            $lt: `${endDate}T23:59:59.999Z`,
+        };
+    }
+    //filter based on keyboard
     if (keyword) {
-        queryObject.keyword = keyword;
+        queryObject.description = { $regex: keyword, $options: 'i' };
     }
+    //filter based on created by
     if (createdBy) {
-        queryObject.createdBy = createdBy;
+        queryObject.createdBy = { $regex: createdBy, $options: 'i' };
     }
+    //fitler based on completed status
     if (completed) {
         queryObject.completed = completed;
     }
+
     console.log(queryObject);
-    const allEvents = await getEventsSvc(page, queryObject);
-    res.status(201).json({ status: 'success', count: allEvents.length, data: allEvents });
+    const allEventDetails = await getEventsSvc(page, queryObject);
+    res.status(201).json({ status: 'success', count: allEventDetails.length, data: allEventDetails });
 };
+
 const addEvent = async (req, res, next) => {
-    const data = req.body;
+    const eventData = req.body;
 
-    data.createdBy = res.locals.claims.email;
-    if (!data.attendee) data.attendee = [];
-    data.attendee.push(res.locals.claims.email);
+    eventData.createdBy = res.locals.claims.email;
+    if (!eventData.attendee) eventData.attendee = [];
+    eventData.attendee.push(res.locals.claims.email);
 
-    if (Object.keys(data).length === 0) {
+    if (Object.keys(eventData).length === 0) {
         const httpError = createHttpError('Body is missing', 400);
         next(httpError);
         return;
     }
-    const insertedEvent = await addEventSvc(data);
+    const insertedEvent = await addEventSvc(eventData);
     res.status(201).json({ status: 'success', data: insertedEvent });
 };
 
-const getAEvent = async (req, res) => {
-    res.status(201).json({ status: 'Success to get a Event' });
+const getEventById = async (req, res) => {
+    const eventId = req.params.id;
+    const eventDetails = await getEventByIdSvc(eventId);
+    res.status(201).json({ status: 'success', data: eventDetails });
 };
 
 const editEvent = async (req, res) => {
-    res.status(201).json({ status: 'Success getEvent', data: req.body });
+    const eventId = req.params.id;
+    const eventDetails = req.body;
+    const updatedEvent = await editEventSvc(eventId, eventDetails);
+    res.status(201).json({ status: 'true', data: updatedEvent });
 };
 
 const deleteEvent = async (req, res) => {
+    await deleteEventSvc();
     res.status(201).json({ status: 'Success Delete Event' });
 };
 
 const excuseEvent = async (req, res) => {
+    await excuseEventSvc();
     res.status(201).json({ status: 'Success exuse Event' });
 };
 
 module.exports = {
     getEvents,
     addEvent,
-    getAEvent,
+    getEventById,
     editEvent,
     deleteEvent,
     excuseEvent,

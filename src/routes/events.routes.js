@@ -3,7 +3,7 @@ const { authenticate } = require('../middleware/auth');
 const {
     getEvents,
     addEvent,
-    getAEvent,
+    getEventById,
     editEvent,
     deleteEvent,
     excuseEvent,
@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.get('/', authenticate, getEvents);
 router.post('/', authenticate, addEvent);
-router.get('/:id', authenticate, getAEvent);
+router.get('/:id', authenticate, getEventById);
 router.patch('/:id', authenticate, editEvent);
 router.delete('/:id', authenticate, deleteEvent);
 router.patch('/:id/excuse', authenticate, excuseEvent);
