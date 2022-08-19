@@ -47,9 +47,26 @@ const editEventSvc = async (eventId, eventDetails) => {
     return updatedEvent;
 };
 
-const deleteEventSvc = async () => {};
+const deleteEventSvc = async (eventId) => {
+    const deletedEventDetails = await Event.findByIdAndDelete({ _id: eventId });
+    if (!deletedEventDetails) {
+        const error = createHttpError(`No Event Found with Given Id`, 404);
+        throw error;
+    }
+    return deletedEventDetails;
+};
 
-const excuseEventSvc = async () => {};
+const excuseEventSvc = async (eventId, allUsers) => {
+    const excusedEvent = await Event.findByIdAndUpdate(
+        { _id: eventId },
+        { attendee: allUsers },
+        {
+            new: true,
+            runValidators: true,
+        }
+    );
+    return excusedEvent;
+};
 
 module.exports = {
     addEventSvc,

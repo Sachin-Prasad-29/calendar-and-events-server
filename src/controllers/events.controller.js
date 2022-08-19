@@ -10,10 +10,12 @@ const {
 const jwt = require('jsonwebtoken');
 
 const getEvents = async (req, res) => {
+    const userEmail = res.locals.claims.email;
     const { page, title, category, startDate, endDate, createdOn, keyword, createdBy, completed } = req.query;
+
     //console.log(req.query);
     const queryObject = {};
-
+    queryObject.attendee = userEmail;
     //filter based on title
     if (title) {
         queryObject.title = { $regex: title, $options: 'i' };
@@ -59,7 +61,7 @@ const getEvents = async (req, res) => {
 
     console.log(queryObject);
     const allEventDetails = await getEventsSvc(page, queryObject);
-    res.status(201).json({ status: 'success', count: allEventDetails.length, data: allEventDetails });
+    res.status(201).json({ status: 'true', data: allEventDetails });
 };
 
 const addEvent = async (req, res, next) => {
@@ -75,13 +77,13 @@ const addEvent = async (req, res, next) => {
         return;
     }
     const insertedEvent = await addEventSvc(eventData);
-    res.status(201).json({ status: 'success', data: insertedEvent });
+    res.status(201).json({ status: 'true', data: insertedEvent });
 };
 
 const getEventById = async (req, res) => {
     const eventId = req.params.id;
     const eventDetails = await getEventByIdSvc(eventId);
-    res.status(201).json({ status: 'success', data: eventDetails });
+    res.status(201).json({ status: 'true', data: eventDetails });
 };
 
 const editEvent = async (req, res) => {
@@ -92,13 +94,21 @@ const editEvent = async (req, res) => {
 };
 
 const deleteEvent = async (req, res) => {
-    await deleteEventSvc();
-    res.status(201).json({ status: 'Success Delete Event' });
+    const eventId = req.params.id;
+    const deletedEventDetails = await deleteEventSvc(eventId);
+    res.status(201).json({ status: 'true', data: deletedEventDetails });
 };
 
 const excuseEvent = async (req, res) => {
-    await excuseEventSvc();
-    res.status(201).json({ status: 'Success exuse Event' });
+    const eventId = req.params.id;
+    const userEmail = res.locals.claims.email;
+    const allUsers = req.body;
+    console.log('Before', allUsers);
+    const index = allUsers.attendee.indexOf(userEmail);
+    allUsers.attendee.splice(index, 1);
+    console.log('after', allUsers);
+    const excusedEvent = await excuseEventSvc(eventId, allUsers.attendee);
+    res.status(201).json({ status: 'true', data: excusedEvent });
 };
 
 module.exports = {
