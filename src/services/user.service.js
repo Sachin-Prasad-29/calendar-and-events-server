@@ -39,6 +39,7 @@ const getProfileSvc = async (id) => {
     }
     return userDetails;
 };
+const editProfilePicSvc = async () => {};
 
 const editProfileSvc = async (id, data) => {
     const userDetails = await User.findByIdAndUpdate({ _id: id }, data, {
@@ -65,6 +66,7 @@ module.exports = {
     getUserByEmail,
     checkPassword,
     getProfileSvc,
+    editProfilePicSvc,
     editProfileSvc,
     getAllUsersSvc,
 };

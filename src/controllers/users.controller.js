@@ -21,7 +21,8 @@ const register = async (req, res, next) => {
         ...insertedUser.toObject(),
     };
     delete userToSend.password;
-    res.status(201).json({ status: 'success', data: insertedUser });
+    userToSend.success = true
+    res.status(201).json(userToSend);
 };
 
 const login = async (req, res, next) => {
@@ -47,16 +48,13 @@ const login = async (req, res, next) => {
             const httpError = createHttpError('Internal Server Error', 500);
             next(httpError);
         }
-
-        res.status(201).json({
-            status: 'success',
-            data: {
-                name: user.name,
-                email: user.email, // useful for frontend app
-                // token: token
-                token,
-            },
-        });
+        const userDetails = {
+                 name: user.name,
+                email: user.email, 
+                token:token,
+                success:true
+        }
+        res.status(201).json(userDetails);
     });
 };
 
@@ -65,7 +63,13 @@ const getProfile = async (req, res) => {
     const userDetails = await getProfileSvc(userId);
     let userToSend = { ...userDetails.toObject() };
     delete userToSend.password;
-    res.status(201).json({ status: 'success', data: userToSend });
+    userToSend.success= true;
+    res.status(201).json(userToSend);
+};
+
+const editProfilePic = async () => {
+    // await editProfilePicSvc();
+    res.status(201).json({ success: true });
 };
 
 const editProfile = async (req, res) => {
@@ -75,17 +79,20 @@ const editProfile = async (req, res) => {
 
     let userToSend = { ...userDetails.toObject() };
     delete userToSend.password;
-    res.status(201).json({ status: 'success', data: userToSend });
+    userToSend.success = true;
+    res.status(201).json(userToSend );
 };
 const getAllUsers = async (req, res) => {
     const alluserDetails = await getAllUsersSvc();
-    res.status(201).json({ status: 'success', count: alluserDetails.length, data: alluserDetails });
+    alluserDetails.success = true;
+    res.status(201).json(alluserDetails);
 };
 
 module.exports = {
     register,
     login,
     getProfile,
+    editProfilePic,
     editProfile,
     getAllUsers,
 };

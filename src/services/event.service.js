@@ -1,17 +1,17 @@
+const { getAllEvents } = require('../controllers/events.controller');
 const { createHttpError } = require('../errors/custom-error');
-const { findById } = require('../models/Event');
+// const { findById } = require('../models/Event');
 const Event = require('../models/Event');
 
-const addEventSvc = async (data) => {
-    const insertedEvent = await Event.create(data);
-    if (!insertedEvent) {
-        const error = createHttpError(`Bad Request`, 400);
+const getAllEventsSvc = async (queryObject) => {
+    const allEvents = await Event.find(queryObject);
+    if (!allEvents) {
+        const error = createHttpError(`No Event Found `, 400);
         throw error;
     }
-    return insertedEvent;
+    return allEvents;
 };
 
-//
 const getEventsSvc = async (_page, queryObject) => {
     let result = Event.find(queryObject);
     const page = _page || 1;
@@ -24,6 +24,15 @@ const getEventsSvc = async (_page, queryObject) => {
     }
     const allEvents = await result;
     return allEvents;
+};
+
+const addEventSvc = async (data) => {
+    const insertedEvent = await Event.create(data);
+    if (!insertedEvent) {
+        const error = createHttpError(`Bad Request`, 400);
+        throw error;
+    }
+    return insertedEvent;
 };
 
 const getEventByIdSvc = async (eventId) => {
@@ -69,8 +78,9 @@ const excuseEventSvc = async (eventId, allUsers) => {
 };
 
 module.exports = {
-    addEventSvc,
+    getAllEventsSvc,
     getEventsSvc,
+    addEventSvc,
     getEventByIdSvc,
     editEventSvc,
     deleteEventSvc,

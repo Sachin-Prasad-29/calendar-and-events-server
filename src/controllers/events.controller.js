@@ -1,13 +1,23 @@
 const { createHttpError } = require('../errors/custom-error');
 const {
-    addEventSvc,
+    getAllEventsSvc,
     getEventsSvc,
+    addEventSvc,
     getEventByIdSvc,
     editEventSvc,
     deleteEventSvc,
     excuseEventSvc,
 } = require('../services/event.service');
 const jwt = require('jsonwebtoken');
+
+const getAllEvents = async (req, res) => {
+    const userEmail = res.locals.claims.email;
+    const queryObject = {};
+    queryObject.attendee = userEmail;
+    const allEvent = await getAllEventsSvc(queryObject);
+    allEventDetails = { success: true, events: allEvent };
+    res.status(201).json(allEventDetails);
+};
 
 const getEvents = async (req, res) => {
     const userEmail = res.locals.claims.email;
@@ -16,14 +26,17 @@ const getEvents = async (req, res) => {
     //console.log(req.query);
     const queryObject = {};
     queryObject.attendee = userEmail;
+
     //filter based on title
     if (title) {
         queryObject.title = { $regex: title, $options: 'i' };
     }
+
     //filter based on category
     if (category) {
         queryObject.category = category;
     }
+
     //filter based on created Date
     if (createdOn) {
         queryObject.createdOn = {
@@ -31,6 +44,7 @@ const getEvents = async (req, res) => {
             $lt: `${createdOn}T23:59:59.999Z`,
         };
     }
+
     //filter based on startDate
     if (startDate) {
         queryObject.startDate = {
@@ -46,22 +60,25 @@ const getEvents = async (req, res) => {
             $lt: `${endDate}T23:59:59.999Z`,
         };
     }
+
     //filter based on keyboard
     if (keyword) {
         queryObject.description = { $regex: keyword, $options: 'i' };
     }
+
     //filter based on created by
     if (createdBy) {
         queryObject.createdBy = { $regex: createdBy, $options: 'i' };
     }
+
     //fitler based on completed status
     if (completed) {
         queryObject.completed = completed;
     }
 
-    console.log(queryObject);
-    const allEventDetails = await getEventsSvc(page, queryObject);
-    res.status(201).json({ status: 'true', data: allEventDetails });
+    const allEvent = await getEventsSvc(page, queryObject);
+    allEventDetails = { success: true, events: allEvent };
+    res.status(201).json(allEventDetails);
 };
 
 const addEvent = async (req, res, next) => {
@@ -77,41 +94,48 @@ const addEvent = async (req, res, next) => {
         return;
     }
     const insertedEvent = await addEventSvc(eventData);
-    res.status(201).json({ status: 'true', data: insertedEvent });
+    insertedEvent.success = true;
+    res.status(201).json(insertedEvent);
 };
 
 const getEventById = async (req, res) => {
     const eventId = req.params.id;
     const eventDetails = await getEventByIdSvc(eventId);
-    res.status(201).json({ status: 'true', data: eventDetails });
+    eventDetails.success = true;
+    res.status(201).json(eventDetails);
 };
 
 const editEvent = async (req, res) => {
     const eventId = req.params.id;
     const eventDetails = req.body;
+
     const updatedEvent = await editEventSvc(eventId, eventDetails);
-    res.status(201).json({ status: 'true', data: updatedEvent });
+    updatedEvent.success = true;
+    res.status(201).json(updatedEvent);
 };
 
 const deleteEvent = async (req, res) => {
     const eventId = req.params.id;
     const deletedEventDetails = await deleteEventSvc(eventId);
-    res.status(201).json({ status: 'true', data: deletedEventDetails });
+    deletedEventDetails.success = true;
+    res.status(201).json(deletedEventDetails);
 };
 
 const excuseEvent = async (req, res) => {
     const eventId = req.params.id;
     const userEmail = res.locals.claims.email;
     const allUsers = req.body;
-    console.log('Before', allUsers);
+
     const index = allUsers.attendee.indexOf(userEmail);
     allUsers.attendee.splice(index, 1);
-    console.log('after', allUsers);
+
     const excusedEvent = await excuseEventSvc(eventId, allUsers.attendee);
-    res.status(201).json({ status: 'true', data: excusedEvent });
+    excuseEvent.success = true;
+    res.status(201).json(excusedEvent);
 };
 
 module.exports = {
+    getAllEvents,
     getEvents,
     addEvent,
     getEventById,
