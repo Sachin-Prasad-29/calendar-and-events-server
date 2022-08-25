@@ -8,58 +8,57 @@ const EventSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        enum:['event','task','reminder']
+        enum: ['event', 'task', 'reminder'],
+        required: [true, 'Category must be Provided'],
     },
     startDate: {
         type: Date,
-        required: [true,'start Date must be provided']
+        required: [true, 'start Date must be provided'],
     },
     endDate: {
         type: Date,
-        default:null
+        default: null,
     },
     startTime: {
         type: timeSchema,
-        required: [true,'start Time must be provided']
+        required: [true, 'start Time must be provided'],
     },
     endTime: {
         type: timeSchema,
-        default:null
+        default: null,
     },
-    attendee:{
+    attendee: {
         type: Array,
-        required:null
+        required: null,
     },
-    createdOn:{
-        type:Date,
-        required:true,
-        default:Date.now()
+    createdOn: {
+        type: Date,
+        required: true,
     },
-    notification:{
-        type:Boolean,
-        default:false
+    notification: {
+        type: Boolean,
+        default: false,
     },
-    notifyBefore:{
-        type:Number,
-        default:15
-    }, 
-    location:{
-        type:String,
-        default:null
+    notifyBefore: {
+        type: Number,
+        default: 15,
     },
-    description:{
-        type:String,
-        default:null
+    location: {
+        type: String,
+        default: null,
     },
-    createdBy:{
-        type:String,
-        required:[true, 'Created by must be provided']
+    description: {
+        type: String,
+        default: null,
     },
-    completed:{
-        type:Boolean,
-        default:false
-    }
-    
+    createdBy: {
+        type: String,
+        required: [true, 'Created by must be provided'],
+    },
+    completed: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 module.exports = mongoose.model('Event', EventSchema);

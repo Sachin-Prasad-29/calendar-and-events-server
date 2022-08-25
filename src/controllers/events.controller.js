@@ -77,7 +77,7 @@ const getEvents = async (req, res) => {
     }
 
     const allEvent = await getEventsSvc(page, queryObject);
-    allEventDetails = { success: true, events: allEvent };
+    const allEventDetails = { success: true, events: allEvent };
     res.status(201).json(allEventDetails);
 };
 
@@ -94,15 +94,16 @@ const addEvent = async (req, res, next) => {
         return;
     }
     const insertedEvent = await addEventSvc(eventData);
-    insertedEvent.success = true;
-    res.status(201).json(insertedEvent);
+    const eventDetail = { success: true, event: insertedEvent };
+    res.status(201).json(eventDetail);
 };
 
 const getEventById = async (req, res) => {
     const eventId = req.params.id;
-    const eventDetails = await getEventByIdSvc(eventId);
-    eventDetails.success = true;
-    res.status(201).json(eventDetails);
+    const fetchedEvent = await getEventByIdSvc(eventId);
+    const eventDetail = { success: true, event: fetchedEvent };
+    res.status(201).json(eventDetail);
+    
 };
 
 const editEvent = async (req, res) => {
