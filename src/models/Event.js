@@ -59,6 +59,9 @@ const EventSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    color: {
+        type: String,
+    },
 });
 
 module.exports = mongoose.model('Event', EventSchema);

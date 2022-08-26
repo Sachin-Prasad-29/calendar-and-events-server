@@ -1,6 +1,6 @@
-const { getAllEvents } = require('../controllers/events.controller');
+
 const { createHttpError } = require('../errors/custom-error');
-// const { findById } = require('../models/Event');
+
 const Event = require('../models/Event');
 
 const getAllEventsSvc = async (queryObject) => {

@@ -93,6 +93,9 @@ const addEvent = async (req, res, next) => {
         next(httpError);
         return;
     }
+    if (eventData.category === 'event') eventData.color = 'primary';
+    if (eventData.category === 'task') eventData.color = 'success';
+    if (eventData.category === 'reminder') eventData.color = 'orange';
     const insertedEvent = await addEventSvc(eventData);
     const eventDetail = { success: true, event: insertedEvent };
     res.status(201).json(eventDetail);
@@ -103,13 +106,13 @@ const getEventById = async (req, res) => {
     const fetchedEvent = await getEventByIdSvc(eventId);
     const eventDetail = { success: true, event: fetchedEvent };
     res.status(201).json(eventDetail);
-    
 };
 
 const editEvent = async (req, res) => {
     const eventId = req.params.id;
     const eventDetails = req.body;
-
+    
+    console.log(eventDetails);
     const updatedEvent = await editEventSvc(eventId, eventDetails);
     updatedEvent.success = true;
     res.status(201).json(updatedEvent);

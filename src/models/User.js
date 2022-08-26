@@ -35,6 +35,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: null,
     },
+    gender: {
+        type: String,
+        enum: ['Male', 'Female', 'Other'],
+    },
 });
 
 const emailPat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
