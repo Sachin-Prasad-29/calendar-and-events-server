@@ -1,8 +1,13 @@
 const { createHttpError } = require('../errors/custom-error');
+const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 const addUser = async (user) => {
     const insertedUser = await User.create(user);
+    if (!insertedUser) {
+        const error = createHttpError('Bad Credentials', 400);
+        throw error;
+    }
     return insertedUser;
 };
 
@@ -26,11 +31,42 @@ const checkPassword = async (user, plainTextPassword) => {
     return isMatch;
 };
 
-const updateProfilePic = async (id, profilePic) => {};
+const getProfileSvc = async (id) => {
+    const userDetails = await User.findById(id);
+    if (userDetails === null) {
+        const error = createHttpError(`No user found with id: ${id}`, 400);
+        throw error;
+    }
+    return userDetails;
+};
+const editProfilePicSvc = async () => {};
+
+const editProfileSvc = async (id, data) => {
+    const userDetails = await User.findByIdAndUpdate({ _id: id }, data, {
+        new: true,
+        runValidators: true,
+    });
+    if (!userDetails) {
+        const error = createHttpError(`No user found with id: ${id}`, 400);
+        throw error;
+    }
+    return userDetails;
+};
+const getAllUsersSvc = async () => {
+    let alluserDetails = await User.find({}).select('_id name email');
+    if (!alluserDetails) {
+        const error = createHttpError(`Something sent wrong to get All user`, 400);
+        throw error;
+    }
+    return alluserDetails;
+};
 
 module.exports = {
     addUser,
     getUserByEmail,
     checkPassword,
-    updateProfilePic,
+    getProfileSvc,
+    editProfilePicSvc,
+    editProfileSvc,
+    getAllUsersSvc,
 };

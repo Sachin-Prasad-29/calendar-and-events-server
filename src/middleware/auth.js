@@ -12,6 +12,7 @@ const authenticate = (req, res, next) => {
         }
 
         res.locals.claims = claims;
+
         next();
     });
 };
