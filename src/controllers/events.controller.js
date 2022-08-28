@@ -97,32 +97,32 @@ const addEvent = async (req, res, next) => {
     if (eventData.category === 'task') eventData.color = 'success';
     if (eventData.category === 'reminder') eventData.color = 'orange';
     const insertedEvent = await addEventSvc(eventData);
-    const eventDetail = { success: true, event: insertedEvent };
+    const eventDetail = { success: true, events: insertedEvent };
     res.status(201).json(eventDetail);
 };
 
 const getEventById = async (req, res) => {
     const eventId = req.params.id;
     const fetchedEvent = await getEventByIdSvc(eventId);
-    const eventDetail = { success: true, event: fetchedEvent };
+    const eventDetail = { success: true, events: fetchedEvent };
     res.status(201).json(eventDetail);
 };
 
 const editEvent = async (req, res) => {
     const eventId = req.params.id;
     const eventDetails = req.body;
-    
+
     console.log(eventDetails);
     const updatedEvent = await editEventSvc(eventId, eventDetails);
-    updatedEvent.success = true;
-    res.status(201).json(updatedEvent);
+    const eventDetail = { success: true, events: updatedEvent };
+    res.status(201).json(eventDetail);
 };
 
 const deleteEvent = async (req, res) => {
     const eventId = req.params.id;
     const deletedEventDetails = await deleteEventSvc(eventId);
-    deletedEventDetails.success = true;
-    res.status(201).json(deletedEventDetails);
+    const eventDetail = { success: true, events: deletedEventDetails };
+    res.status(201).json(eventDetail);
 };
 
 const excuseEvent = async (req, res) => {
@@ -134,8 +134,8 @@ const excuseEvent = async (req, res) => {
     allUsers.attendee.splice(index, 1);
 
     const excusedEvent = await excuseEventSvc(eventId, allUsers.attendee);
-    excuseEvent.success = true;
-    res.status(201).json(excusedEvent);
+    const eventDetail = { success: true, events: excusedEvent };
+    res.status(201).json(eventDetail);
 };
 
 module.exports = {

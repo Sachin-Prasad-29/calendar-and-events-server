@@ -14,7 +14,7 @@ const addUser = async (user) => {
 const getUserByEmail = async (email) => {
     const user = await User.findOne({ email });
     if (user === null) {
-        const error = createHttpError('Bad Credentials', 400);
+        const error = createHttpError('User Not Found with the email', 400);
         throw error;
     }
 
@@ -25,7 +25,7 @@ const checkPassword = async (user, plainTextPassword) => {
     let isMatch;
     isMatch = await user.checkPassword(plainTextPassword);
     if (!isMatch) {
-        const error = createHttpError('Bad Credentials Pass', 400);
+        const error = createHttpError('The Entered password is not matching', 400);
         throw error;
     }
     return isMatch;
@@ -53,7 +53,7 @@ const editProfileSvc = async (id, data) => {
     return userDetails;
 };
 const getAllUsersSvc = async () => {
-    let alluserDetails = await User.find({}).select('_id name email');
+    let alluserDetails = await User.find({}).select('_id name email profilePic');
     if (!alluserDetails) {
         const error = createHttpError(`Something sent wrong to get All user`, 400);
         throw error;
