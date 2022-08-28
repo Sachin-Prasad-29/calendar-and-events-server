@@ -1,4 +1,3 @@
-
 const { createHttpError } = require('../errors/custom-error');
 
 const Event = require('../models/Event');

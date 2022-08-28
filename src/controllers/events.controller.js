@@ -21,15 +21,15 @@ const getAllEvents = async (req, res) => {
 
 const getEvents = async (req, res) => {
     const userEmail = res.locals.claims.email;
-    const { page, title, category, startDate, endDate, createdOn, keyword, createdBy, completed } = req.query;
+    const { page, name, category, startDate, endDate, createdOn, keyword, createdBy, completed } = req.query;
 
     //console.log(req.query);
     const queryObject = {};
     queryObject.attendee = userEmail;
 
     //filter based on title
-    if (title) {
-        queryObject.title = { $regex: title, $options: 'i' };
+    if (name) {
+        queryObject.name = { $regex: name, $options: 'i' };
     }
 
     //filter based on category
@@ -47,7 +47,7 @@ const getEvents = async (req, res) => {
 
     //filter based on startDate
     if (startDate) {
-        queryObject.startDate = {
+        queryObject.start = {
             $gte: `${startDate}T00:00:00.000Z`,
             $lt: `${startDate}T23:59:59.999Z`,
         };
@@ -63,7 +63,7 @@ const getEvents = async (req, res) => {
 
     //filter based on keyboard
     if (keyword) {
-        queryObject.description = { $regex: keyword, $options: 'i' };
+        queryObject.details = { $regex: keyword, $options: 'i' };
     }
 
     //filter based on created by

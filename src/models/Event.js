@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const timeSchema = require('./Time');
 
 const EventSchema = new mongoose.Schema({
-    title: {
+    name: {
         type: String,
         required: [true, 'Name must be Provided'],
     },
@@ -47,7 +47,7 @@ const EventSchema = new mongoose.Schema({
         type: String,
         default: null,
     },
-    description: {
+    details: {
         type: String,
         default: null,
     },
