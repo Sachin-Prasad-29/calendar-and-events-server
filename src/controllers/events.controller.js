@@ -21,7 +21,7 @@ const getAllEvents = async (req, res) => {
 
 const getEvents = async (req, res) => {
     const userEmail = res.locals.claims.email;
-    const { page, name, category, startDate, endDate, createdOn, keyword, createdBy, completed } = req.query;
+    const { page, name, category, startDate, createdOn, keyword, createdBy, completed } = req.query;
 
     //console.log(req.query);
     const queryObject = {};
@@ -47,19 +47,13 @@ const getEvents = async (req, res) => {
 
     //filter based on startDate
     if (startDate) {
-        queryObject.start = {
+        queryObject.startDate = {
             $gte: `${startDate}T00:00:00.000Z`,
             $lt: `${startDate}T23:59:59.999Z`,
         };
     }
 
     //filter based on endDate
-    if (endDate) {
-        queryObject.endDate = {
-            $gte: `${endDate}T00:00:00.000Z`,
-            $lt: `${endDate}T23:59:59.999Z`,
-        };
-    }
 
     //filter based on keyboard
     if (keyword) {
