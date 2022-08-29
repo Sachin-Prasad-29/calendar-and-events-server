@@ -21,7 +21,7 @@ const getAllEvents = async (req, res) => {
 
 const getEvents = async (req, res) => {
     const userEmail = res.locals.claims.email;
-    const { page, name, category, startDate, endDate, createdOn, keyword, createdBy, completed } = req.query;
+    const { page, name, category, startDate, createdOn, keyword, createdBy, completed } = req.query;
 
     //console.log(req.query);
     const queryObject = {};
@@ -47,19 +47,13 @@ const getEvents = async (req, res) => {
 
     //filter based on startDate
     if (startDate) {
-        queryObject.start = {
+        queryObject.startDate = {
             $gte: `${startDate}T00:00:00.000Z`,
             $lt: `${startDate}T23:59:59.999Z`,
         };
     }
 
     //filter based on endDate
-    if (endDate) {
-        queryObject.endDate = {
-            $gte: `${endDate}T00:00:00.000Z`,
-            $lt: `${endDate}T23:59:59.999Z`,
-        };
-    }
 
     //filter based on keyboard
     if (keyword) {
@@ -97,32 +91,32 @@ const addEvent = async (req, res, next) => {
     if (eventData.category === 'task') eventData.color = 'success';
     if (eventData.category === 'reminder') eventData.color = 'orange';
     const insertedEvent = await addEventSvc(eventData);
-    const eventDetail = { success: true, event: insertedEvent };
+    const eventDetail = { success: true, events: insertedEvent };
     res.status(201).json(eventDetail);
 };
 
 const getEventById = async (req, res) => {
     const eventId = req.params.id;
     const fetchedEvent = await getEventByIdSvc(eventId);
-    const eventDetail = { success: true, event: fetchedEvent };
+    const eventDetail = { success: true, events: fetchedEvent };
     res.status(201).json(eventDetail);
 };
 
 const editEvent = async (req, res) => {
     const eventId = req.params.id;
     const eventDetails = req.body;
-    
+
     console.log(eventDetails);
     const updatedEvent = await editEventSvc(eventId, eventDetails);
-    updatedEvent.success = true;
-    res.status(201).json(updatedEvent);
+    const eventDetail = { success: true, events: updatedEvent };
+    res.status(201).json(eventDetail);
 };
 
 const deleteEvent = async (req, res) => {
     const eventId = req.params.id;
     const deletedEventDetails = await deleteEventSvc(eventId);
-    deletedEventDetails.success = true;
-    res.status(201).json(deletedEventDetails);
+    const eventDetail = { success: true, events: deletedEventDetails };
+    res.status(201).json(eventDetail);
 };
 
 const excuseEvent = async (req, res) => {
@@ -134,8 +128,8 @@ const excuseEvent = async (req, res) => {
     allUsers.attendee.splice(index, 1);
 
     const excusedEvent = await excuseEventSvc(eventId, allUsers.attendee);
-    excuseEvent.success = true;
-    res.status(201).json(excusedEvent);
+    const eventDetail = { success: true, events: excusedEvent };
+    res.status(201).json(eventDetail);
 };
 
 module.exports = {

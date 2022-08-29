@@ -6,11 +6,18 @@ const eventsApiRouter = require('./routes/events.routes');
 const notFound = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
 const { connectDB } = require('./db/connect');
+const fileUpload = require('express-fileupload');
 const cors = require('cors');
 const app = express();
 app.use(
     cors({
         origin: 'http://localhost:8080',
+    })
+);
+
+app.use(
+    fileUpload({
+        useTempFiles: true,
     })
 );
 // standard middleware

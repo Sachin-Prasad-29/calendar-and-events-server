@@ -1,2 +1,3 @@
-module.exports.clintId = '277685923021-5s8lqp8kr1v9noba6qvm3qcj8nmp9v41.apps.googleusercontent.com';
-module.exports.clientSecret = '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';
+module.exports.clintId = '784562668211-2i3aejjua8er7u874jratjfq93o7qdkl.apps.googleusercontent.com';
+module.exports.clientSecret = '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';
+

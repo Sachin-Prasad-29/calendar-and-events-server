@@ -17,23 +17,23 @@ const userSchema = new mongoose.Schema({
     },
     phone: {
         type: String,
-        default: null,
+        default: '',
     },
     profilePic: {
         type: String,
-        default: null,
+        default: '',
     },
     birthday: {
         type: Date,
-        default: null,
+        default: '',
     },
     location: {
         type: String,
-        default: null,
+        default: '',
     },
     website: {
         type: String,
-        default: null,
+        default: '',
     },
     gender: {
         type: String,

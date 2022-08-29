@@ -12,7 +12,7 @@ const getAllEventsSvc = async (queryObject) => {
 };
 
 const getEventsSvc = async (_page, queryObject) => {
-    let result = Event.find(queryObject);
+    let result = Event.find(queryObject).sort({ startDate: 1 });
     const page = _page || 1;
     skip = (page - 1) * 10;
 
