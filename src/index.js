@@ -34,7 +34,6 @@ app.use(notFound); // custom 404 page( middleware);
 app.use(errorHandlerMiddleware); // custom error handler for handing all the errors
 
 const port = process.env.PORT || 5001;
-// console.log(process.env.MONGO_URI);
 
 const start = async () => {
     try {
