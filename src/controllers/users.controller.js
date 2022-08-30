@@ -1,9 +1,9 @@
 const { createHttpError } = require('../errors/custom-error');
 const cloudinary = require('cloudinary').v2;
 cloudinary.config({
-    cloud_name: 'dajmfasvq',
-    api_key: '283869585878853',
-    api_secret: 'zQ6IGQ2cCKiadH2kXPTcGDFfcBA',
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET,
 });
 const {
     addUser,
@@ -43,7 +43,7 @@ const login = async (req, res, next) => {
     const user = await getUserByEmail(email);
 
     await checkPassword(user, password);
-    
+
     const claims = {
         id: user._id,
         name: user.name,
@@ -68,30 +68,33 @@ const login = async (req, res, next) => {
 const getProfile = async (req, res) => {
     const userId = res.locals.claims.id;
     const userDetails = await getProfileSvc(userId);
+
     let userToSend = { ...userDetails.toObject() };
     delete userToSend.password;
+
     userToSend.success = true;
     res.status(201).json(userToSend);
 };
 
 const editProfilePic = async (req, res) => {
     const file = req.files.photo;
-   
+
     const userId = res.locals.claims.id;
-    cloudinary.uploader.upload(file.tempFilePath,async (err, result) => {
-        console.log(result.url);
-        const data = { profilePic:result.url };
-        const userDetails = await editProfileSvc(userId,data);
+    cloudinary.uploader.upload(file.tempFilePath, async (err, result) => {
+        const data = { profilePic: result.url };
+        const userDetails = await editProfileSvc(userId, data);
+
         let userToSend = { ...userDetails.toObject() };
         delete userToSend.password;
         userToSend.success = true;
-        res.status(201).json(userToSend)
-    }); 
+        res.status(201).json(userToSend);
+    });
 };
 
 const editProfile = async (req, res) => {
     const data = req.body;
     const userId = res.locals.claims.id;
+
     const userDetails = await editProfileSvc(userId, data);
 
     let userToSend = { ...userDetails.toObject() };
@@ -99,6 +102,7 @@ const editProfile = async (req, res) => {
     userToSend.success = true;
     res.status(201).json(userToSend);
 };
+
 const getAllUsers = async (req, res) => {
     const alluserDetails = await getAllUsersSvc();
     alluserDetails.success = true;

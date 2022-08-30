@@ -1,6 +1,7 @@
 require('dotenv').config();
 require('express-async-errors'); // this will allow to throw error without writing try catch in our function
 const express = require('express');
+var bodyParser = require('body-parser');
 const userApiRouter = require('./routes/users.routes');
 const eventsApiRouter = require('./routes/events.routes');
 const notFound = require('./middleware/not-found');
@@ -22,7 +23,7 @@ app.use(
 );
 // standard middleware
 app.use(express.json()); // to get json data from req.body
-app.use(express.urlencoded());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 //setting routes middleware
 app.use('/api/auth', userApiRouter);
@@ -33,7 +34,6 @@ app.use(notFound); // custom 404 page( middleware);
 app.use(errorHandlerMiddleware); // custom error handler for handing all the errors
 
 const port = process.env.PORT || 5001;
-// console.log(process.env.MONGO_URI);
 
 const start = async () => {
     try {
