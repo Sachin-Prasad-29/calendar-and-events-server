@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
     },
     profilePic: {
         type: String,
-        default: '',
+        default: 'https://www.ssrl-uark.com/wp-content/uploads/2014/06/no-profile-image.png',
     },
     birthday: {
         type: Date,
