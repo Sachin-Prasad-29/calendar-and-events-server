@@ -122,12 +122,12 @@ const deleteEvent = async (req, res) => {
 const excuseEvent = async (req, res) => {
     const eventId = req.params.id;
     const userEmail = res.locals.claims.email;
-    const allUsers = req.body;
+    const event = req.body;
 
-    const index = allUsers.attendee.indexOf(userEmail);
-    allUsers.attendee.splice(index, 1);
+    const index = event.attendee.indexOf(userEmail);
+    event.attendee.splice(index, 1);
 
-    const excusedEvent = await excuseEventSvc(eventId, allUsers.attendee);
+    const excusedEvent = await excuseEventSvc(eventId, event.attendee);
     const eventDetail = { success: true, events: excusedEvent };
     res.status(201).json(eventDetail);
 };
