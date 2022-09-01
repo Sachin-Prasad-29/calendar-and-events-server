@@ -1,4 +1,6 @@
 const { createHttpError } = require('../errors/custom-error');
+const nodemailer = require('nodemailer');
+
 const {
     getAllEventsSvc,
     getEventsSvc,
@@ -9,6 +11,14 @@ const {
     excuseEventSvc,
 } = require('../services/event.service');
 const jwt = require('jsonwebtoken');
+
+let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.AUTH_EMAIL,
+        pass: process.env.AUTH_PASS,
+    },
+});
 
 const getAllEvents = async (req, res) => {
     const userEmail = res.locals.claims.email;
@@ -91,6 +101,44 @@ const addEvent = async (req, res, next) => {
     if (eventData.category === 'task') eventData.color = 'success';
     if (eventData.category === 'reminder') eventData.color = 'orange';
     const insertedEvent = await addEventSvc(eventData);
+
+    const emails = insertedEvent.attendee;
+
+    const mailOptions = {
+        from: process.env.AUTH_EMAIL,
+        to: emails,
+        subject: 'New Event Added',
+        html: `<div>
+        <div style="font-size: 30px; background-color: rgb(0, 140, 255); color: white; padding: 40px 10px">
+            Hi Folks,
+        </div>
+
+        <div style="background-color: white; color: rgb(52, 96, 240)">
+            <hr />
+            <br />
+            <br />
+            <div style="font-size: 25px; padding:10px ; ">A new ${insertedEvent.category} is added to your Calendar.</div>
+            <br />
+            <br />
+            <div style="font-size: 25px;padding:10px ;">${insertedEvent.category} name : ${insertedEvent.name}.</div>
+            <br />
+            <br />
+            <div style="font-size: 25px;padding:10px ;">Start Date : ${insertedEvent.startDate}.</div>
+            <br />
+            <br />
+            <div style="font-size: 25px;padding:10px ;">Attendees : ${emails}.</div>
+            <br />
+            <br />
+            <br />
+            <div style="font-size: 25px ;padding:10px ;">Thanks and Regards</div>
+            <br>
+            <div style="font-size: 25px; padding:10px ;">Calendar Team</div>
+        </div>
+    </div>
+        `,
+    };
+    transporter.sendMail(mailOptions);
+
     const eventDetail = { success: true, events: insertedEvent };
     res.status(201).json(eventDetail);
 };

@@ -1,45 +1,48 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
-const userSchema = new mongoose.Schema({
-    email: {
-        type: String,
-        required: [true, 'Email must be Provided'],
-        unique: true,
+const userSchema = new mongoose.Schema(
+    {
+        email: {
+            type: String,
+            required: [true, 'Email must be Provided'],
+            unique: true,
+        },
+        name: {
+            type: String,
+            required: [true, 'Name must be Provided'],
+        },
+        password: {
+            type: String,
+            required: true,
+        },
+        phone: {
+            type: String,
+            default: '',
+        },
+        profilePic: {
+            type: String,
+            default: 'https://www.ssrl-uark.com/wp-content/uploads/2014/06/no-profile-image.png',
+        },
+        birthday: {
+            type: Date,
+            default: '',
+        },
+        location: {
+            type: String,
+            default: '',
+        },
+        website: {
+            type: String,
+            default: '',
+        },
+        gender: {
+            type: String,
+            enum: ['Male', 'Female', 'Other'],
+        },
     },
-    name: {
-        type: String,
-        required: [true, 'Name must be Provided'],
-    },
-    password: {
-        type: String,
-        required: true,
-    },
-    phone: {
-        type: String,
-        default: '',
-    },
-    profilePic: {
-        type: String,
-        default: 'https://www.ssrl-uark.com/wp-content/uploads/2014/06/no-profile-image.png',
-    },
-    birthday: {
-        type: Date,
-        default: '',
-    },
-    location: {
-        type: String,
-        default: '',
-    },
-    website: {
-        type: String,
-        default: '',
-    },
-    gender: {
-        type: String,
-        enum: ['Male', 'Female', 'Other'],
-    },
-},{timestamps:true})
+    { timestamps: true }
+);
 
 const emailPat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const passwordPat = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,16}$/;
