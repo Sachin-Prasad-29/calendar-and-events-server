@@ -1,7 +1,8 @@
 const express = require('express');
 const { authenticate } = require('../middleware/auth');
 const {
-    register,
+    generateOtp,
+    verifyOtp,
     login,
     getProfile,
     editProfilePic,
@@ -10,7 +11,8 @@ const {
 } = require('../controllers/users.controller');
 const router = express.Router();
 
-router.post('/register', register);
+router.post('/register', generateOtp);
+router.post('/register/verify',verifyOtp)
 router.post('/login', login);
 router.get('/profile', authenticate, getProfile);
 router.patch('/profilepic', authenticate, editProfilePic);
