@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ['Male', 'Female', 'Other'],
     },
-});
+},{timestamps:true})
 
 const emailPat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const passwordPat = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,16}$/;
