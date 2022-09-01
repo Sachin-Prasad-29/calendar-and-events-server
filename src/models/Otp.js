@@ -5,7 +5,6 @@ const otpSchema = new mongoose.Schema(
         email: {
             type: String,
             required: [true, 'Email must be Provided'],
-            unique: true,
         },
         name: {
             type: String,
@@ -23,6 +22,5 @@ const otpSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
-
 
 module.exports = mongoose.model('Otp', otpSchema);

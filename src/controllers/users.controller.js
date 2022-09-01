@@ -59,8 +59,26 @@ const generateOtp = async (req, res, next) => {
         from: process.env.AUTH_EMAIL,
         to: email,
         subject: 'Registration Verification Code',
-        html: `<div> <h2>Hi ${name},</h2>
-        <div> <h1> ${OTP} </h1> <h2>Is your one time password(otp) for the Registration of Calendar and Event app.If you did not request this code, it is possible that someone else is trying to access the  Account ${email}. Do not forward or give this code to anyone.</h2></div>
+        html: `<div>
+        <div style="font-size: 50px; background-color: rgb(0, 140, 255); color: white; padding: 30px 10px">
+            Hi ${name},
+        </div>
+
+        <div style="background-color: white; color: rgb(52, 96, 240)">
+            <hr />
+            <br />
+            <br />
+            
+            <div style="font-size: 25px"><span style="font-size: 40px">${OTP} </span>Is your one time password(otp) for the Registration of Calendar and Event app.</div>
+            <br />
+            <br />
+            <div style="font-size: 25px">If you did not request this code, it is possible that someone else is trying to access the  Account ${email}. Do not forward or give this code to anyone.</div>
+            
+            <div style="font-size: 20px">Thanks and Regards</div>
+            <br>
+            <div style="font-size: 20px">Calendar Team</div>
+        </div>
+    </div>
         `,
     };
     transporter.sendMail(mailOptions);
