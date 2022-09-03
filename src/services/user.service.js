@@ -1,41 +1,83 @@
 const { createHttpError } = require('../errors/custom-error');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const Otp = require('../models/Otp')
+const Otp = require('../models/Otp');
 
 const checkUser = async (email) => {
-    const user = await User.findOne({email})
-    if(user) return true;
-    return false
-}
-
-const getUserForVerificatoin = async (email) =>{
-    const userDetails = await Otp.find({email});
-    if(!userDetails || userDetails.length === 0){
-        const error = createHttpError('Otp has been expired', 400);
+    try {
+        const user = await User.findOne({ email });
+        if (user) return true;
+        return false;
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            const dbError = new Error(`Validation error : ${error.message}`);
+            dbError.type = 'ValidationError';
+            throw dbError;
+        }
+        if (error.name === 'CastError') {
+            const dbError = new Error(`Data type error : ${error.message}`);
+            dbError.type = 'CastError';
+            throw dbError;
+        }
         throw error;
     }
-    return userDetails;
-}
+};
 
-const generateOtpSvc = async (credentials)=>{
-    
-    const response = await Otp.create(credentials);
-    if(!response){
-        const error = createHttpError('Bad Credentials', 400);
+const getUserForVerificatoin = async (email) => {
+    try {
+        const userDetails = await Otp.find({ email });
+        if (!userDetails || userDetails.length === 0) {
+            const error = createHttpError('Otp has been expired', 400);
+            throw error;
+        }
+        return userDetails;
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            const dbError = new Error(`Validation error : ${error.message}`);
+            dbError.type = 'ValidationError';
+            throw dbError;
+        }
         throw error;
     }
-    return response;
-}
+};
 
+const generateOtpSvc = async (credentials) => {
+    try {
+        const response = await Otp.create(credentials);
+        if (!response) {
+            const error = createHttpError('Bad Credentials', 400);
+            throw error;
+        }
+        return response;
+    } catch (error) {
+        throw error;
+    }
+};
 
 const registerUserSvc = async (user) => {
-    const insertedUser = await User.create(user);
+    let insertedUser;
+    try {
+        insertedUser = await User.create(user);
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            const dbError = new Error(`Validation error : ${error.message}`);
+            dbError.type = 'ValidationError';
+            throw dbError;
+        }
+
+        if (error.name === 'CastError') {
+            const dbError = new Error(`Data type error : ${error.message}`);
+            dbError.type = 'CastError';
+            throw dbError;
+        }
+
+        throw error;
+    }
     if (!insertedUser) {
         const error = createHttpError('Bad Credentials', 400);
         throw error;
     }
-    await Otp.deleteMany({email:user.email})
+    await Otp.deleteMany({ email: user.email });
     return insertedUser;
 };
 
@@ -50,29 +92,45 @@ const getUserByEmail = async (email) => {
 
 const checkPassword = async (user, plainTextPassword) => {
     let isMatch;
-    isMatch = await user.checkPassword(plainTextPassword);
+    try {
+        isMatch = await user.checkPassword(plainTextPassword);
+    } catch (error) {
+        const err = createHttpError('Something went wrong checking credentials');
+        error.type = 'DBError';
+        throw err;
+    }
     if (!isMatch) {
-        const error = createHttpError('The Entered password is not matching', 400);
+        const error = new Error('Bad Credentials');
+        error.type = 'BadCredentials';
         throw error;
     }
     return isMatch;
 };
 
 const getProfileSvc = async (id) => {
-    const userDetails = await User.findById(id);
+    let userDetails;
+    try {
+        userDetails = await User.findById(id);
+    } catch (error) {
+        throw error;
+    }
     if (userDetails === null) {
         const error = createHttpError(`No user found with id: ${id}`, 400);
         throw error;
     }
     return userDetails;
 };
-const editProfilePicSvc = async () => {};
 
 const editProfileSvc = async (id, data) => {
-    const userDetails = await User.findByIdAndUpdate({ _id: id }, data, {
-        new: true,
-        runValidators: true,
-    });
+    let userDetails;
+    try {
+        userDetails = await User.findByIdAndUpdate({ _id: id }, data, {
+            new: true,
+            runValidators: true,
+        });
+    } catch (error) {
+        throw error;
+    }
     if (!userDetails) {
         const error = createHttpError(`No user found with id: ${id}`, 400);
         throw error;
@@ -80,7 +138,12 @@ const editProfileSvc = async (id, data) => {
     return userDetails;
 };
 const getAllUsersSvc = async () => {
-    let alluserDetails = await User.find({}).select('_id name email profilePic');
+    let alluserDetails;
+    try {
+        alluserDetails = await User.find({}).select('_id name email profilePic');
+    } catch (error) {
+        throw error;
+    }
     if (!alluserDetails) {
         const error = createHttpError(`Something sent wrong to get All user`, 400);
         throw error;
@@ -96,7 +159,6 @@ module.exports = {
     getUserByEmail,
     checkPassword,
     getProfileSvc,
-    editProfilePicSvc,
     editProfileSvc,
     getAllUsersSvc,
 };

@@ -1,5 +1,6 @@
 require('dotenv').config();
-require('express-async-errors'); // this will allow to throw error without writing try catch in our function
+ // this will allow to throw error without writing try catch in our function 
+require('express-async-errors');
 const express = require('express');
 var bodyParser = require('body-parser');
 const userApiRouter = require('./routes/users.routes');
@@ -10,20 +11,19 @@ const { connectDB } = require('./db/connect');
 const fileUpload = require('express-fileupload');
 const cors = require('cors');
 const app = express();
-app.use(
-    cors({
-        origin: '*',
-    })
-);
 
-app.use(
-    fileUpload({
-        useTempFiles: true,
-    })
-);
+//to avoid cors policy error
+app.use(cors({origin: '*'}));
+
+// to allow file upload for the cloudnary
+app.use(fileUpload({ useTempFiles: true }));
+
 // standard middleware
-app.use(express.json()); // to get json data from req.body
-app.use(bodyParser.urlencoded({ extended: true }));
+//to take care of the data present in the body from req.body
+app.use(express.json());
+
+// to take care the data submitted using the form 
+app.use(bodyParser.urlencoded({ extended: true })); 
 
 //setting routes middleware
 app.use('/api/auth', userApiRouter);
@@ -37,11 +37,12 @@ const port = process.env.PORT || 5001;
 
 const start = async () => {
     try {
+        //connection to the database
         await connectDB(process.env.MONGO_URI);
         app.listen(port, console.log(`server is listening on port ${port}...`));
     } catch (error) {
         console.log(error);
     }
 };
-
+//starting the server
 start();
