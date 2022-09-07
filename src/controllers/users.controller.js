@@ -148,20 +148,31 @@ const login = async (req, res, next) => {
             res.status(201).json(userDetails);
         });
     } catch (error) {
-        const httpError = createHttpError(error.message, 400);
-        next(httpError);
+        if (error.type === 'BadCredentials') {
+            // Email, password is provided but is incorrect -> 403
+            const httpError = createHttpError('Bad credentials', 403);
+            next(httpError);
+        } else {
+            const httpError = createHttpError('Internal Server Error', 500);
+            next(httpError);
+        }
     }
 };
 
 const getProfile = async (req, res) => {
     const userId = res.locals.claims.id;
-    const userDetails = await getProfileSvc(userId);
+    try {
+        const userDetails = await getProfileSvc(userId);
 
-    let userToSend = { ...userDetails.toObject() };
-    delete userToSend.password;
+        let userToSend = { ...userDetails.toObject() };
+        delete userToSend.password;
 
-    userToSend.success = true;
-    res.status(201).json(userToSend);
+        userToSend.success = true;
+        res.status(201).json(userToSend);
+    } catch (error) {
+        const httpError = createHttpError(error.message, 400);
+        next(httpError);
+    }
 };
 
 const editProfilePic = async (req, res) => {

@@ -174,7 +174,7 @@ const deleteEvent = async (req, res) => {
     }
 };
 
-const excuseEvent = async (req, res,next) => {
+const excuseEvent = async (req, res, next) => {
     const eventId = req.params.id;
     const userEmail = res.locals.claims.email;
     const event = req.body;
@@ -185,7 +185,7 @@ const excuseEvent = async (req, res,next) => {
         const excusedEvent = await excuseEventSvc(eventId, event.attendee);
         const eventDetail = { success: true, events: excusedEvent };
         res.status(201).json(eventDetail);
-    } catch(error) {
+    } catch (error) {
         const httpError = createHttpError(error.message, 400);
         next(httpError);
     }
