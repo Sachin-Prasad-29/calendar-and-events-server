@@ -26,6 +26,11 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 //setting routes middleware
+app.get('/', (req, res) => {
+    res.send(
+        '<div style="width:200px; margin: auto auto;"><img width="100%"  src="https://media.tenor.com/2jd3xi2WVt0AAAAC/recurring-settings.gif"></div><div style="width:220px; margin: 0 auto;"><h2>Server is Running...</h2></div>'
+    );
+});
 app.use('/api/auth', userApiRouter);
 app.use('/api/events', eventsApiRouter);
 app.use('/api/todo', todoApiRouter);
