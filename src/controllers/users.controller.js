@@ -175,9 +175,9 @@ const getProfile = async (req, res) => {
     }
 }
 
-const editProfilePic = async (req, res) => {
+const editProfilePic = async (req, res,next) => {
     const file = req.files.photo
-
+    console.log(file)
     const userId = res.locals.claims.id
     try {
         cloudinary.uploader.upload(file.tempFilePath, async (err, result) => {
